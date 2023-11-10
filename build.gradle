@@ -1,0 +1,65 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.0.12'
+	id 'io.spring.dependency-management' version '1.1.3'
+
+        // local docker plugin for building base image
+        id 'com.palantir.docker' version '0.35.0'
+        // jib for packaging up Spring Boot jar on top of base image
+        //id 'com.google.cloud.tools.jib' version '3.2.1'
+}
+
+group = 'org.fabianlee'
+version = '0.0.1'
+
+// additional variables
+ext.dockerOwner = 'fabianlee'
+
+java {
+	sourceCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('springCloudVersion', "2022.0.4")
+}
+
+// makes BuildProperties available from Spring context
+springBoot {
+    buildInfo()
+}
+
+bootJar {
+    // without version so Dockerfile can be static
+    archiveFileName = "${archiveBaseName.get()}.${archiveExtension.get()}"
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.cloud:spring-cloud-starter-vault-config'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+tasks.named('bootBuildImage') {
+	builder = 'paketobuildpacks/builder-jammy-base:latest'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// create minimal base image project for OS package and commands
+// https://plugins.gradle.org/plugin/com.palantir.docker
+docker {
+    name "${project.dockerOwner}/${project.projectDir.getName()}:${project.version}"
+    dockerfile file("$buildDir/resources/main/docker/Dockerfile")
+}

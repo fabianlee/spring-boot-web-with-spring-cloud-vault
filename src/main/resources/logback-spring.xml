@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+			<!-- change in logback 3.x %C{1.} no longer valid, remove period-->
+            <Pattern>%black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1}): %msg%n%throwable</Pattern>
+        </layout>
+    </appender>
+
+    <root level="warn">
+        <appender-ref ref="stdout"/>
+    </root>
+
+    <logger name="org.fabianlee.springbootwithvaultsidecar" level="info" additivity="false">
+        <appender-ref ref="stdout" />
+    </logger>
+
+</configuration>
