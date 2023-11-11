@@ -15,15 +15,14 @@ public class SecretService {
 	@Autowired
     private VaultTemplate vaultTemplate;
 
-    public Properties getSecretAsProperties(String backend,String context,String profile) {
+    public Properties getSecretAsProperties(String fullSecretPath) {
 
-    	// return all keys from secret in this
+    	// for final return 
     	Properties props = new Properties();
     	
     	VaultResponse response = null;
     	try {
     		// read secret from kv2 Vault path, which needs 'data' inserted
-    		String fullSecretPath = backend + "/data/" + context + "/" + profile;
     		System.out.println("fullSecretPath: " + fullSecretPath);
     		response = vaultTemplate.read(fullSecretPath);
 
@@ -34,11 +33,13 @@ public class SecretService {
             	// going to be either 'data' or 'metadata'
             	String outerkey = allkeysit.next();
             	
-            	// only process secret data (not metadata for secret)
+            	// only process secret data (not metadata)
             	if ("data".equals(outerkey)) {
 	            	Object genericObj = response.getData().get(outerkey);
 	            	if ( genericObj instanceof java.util.LinkedHashMap ) {
 	            		LinkedHashMap <String,String>secretmap = (LinkedHashMap<String,String>)genericObj;
+	            		
+	            		// go through each key in secret, add to Properties
 	            		Iterator <String>secretmapit = secretmap.keySet().iterator();
 	            		while(secretmapit.hasNext()) {
 	            			String skey = secretmapit.next();

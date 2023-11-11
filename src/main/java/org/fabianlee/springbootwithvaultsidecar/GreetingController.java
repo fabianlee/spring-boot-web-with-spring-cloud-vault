@@ -34,11 +34,8 @@ public class GreetingController {
 		
 		StringBuilder sb = new StringBuilder("The secret is loaded using VaulTemplate from '" + getFullSecretPath() + "':\n");
 
-		Properties props = secret.getSecretAsProperties(
-				env.getProperty("VAULT_BACKEND"),
-				env.getProperty("VAULT_CONTEXT"),
-				env.getProperty("VAULT_PROFILE")
-				);
+		// fetch secret from Vault
+		Properties props = secret.getSecretAsProperties(getFullSecretPath());
 
 		Iterator propit = props.keySet().iterator();
 		while(propit.hasNext()) {
