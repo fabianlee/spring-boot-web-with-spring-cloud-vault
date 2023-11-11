@@ -10,7 +10,7 @@ on:
   #  branches: ['main']
 
 env:
-  BUILD_OCI_WITH: buildah # docker|buildah
+  BUILD_OCI_WITH: docker # docker|buildah
   PUSH_TO_DOCKERHUB: false
   PUSH_TO_GITHUBCR: true
   GH_REGISTRY: ghcr.io # Github Container Registry
