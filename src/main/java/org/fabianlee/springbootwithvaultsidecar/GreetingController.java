@@ -4,11 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
+import org.springframework.vault.core.VaultKeyValueOperationsSupport.KeyValueBackend;
+import org.springframework.vault.core.VaultTemplate;
+import org.springframework.vault.support.VaultResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class GreetingController {
+	
+	@Autowired
+	private VaultTemplate vaultTemplate;
+	VaultResponse response = vaultTemplate
+	        .opsForKeyValue("secret", KeyValueBackend.KV_2).get("webapp/config");
 	
 	@Value("${config.foo")
 	String foo = "foo";
@@ -35,6 +43,11 @@ public class GreetingController {
 		return "foo/username/password: " + getVaultSecretsFromConfig();
 	}
 	
+	@GetMapping("/secret3")
+	@ResponseBody
+	public String secret3() {
+		return "foo/username/password: " + response.getData().get("foo") + "," + response.getData().get("username");
+	}
 	
 	@Autowired Environment env;
 	public String getVaultSecretsFromEnv() {
