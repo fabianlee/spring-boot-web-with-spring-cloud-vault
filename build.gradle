@@ -68,13 +68,17 @@ docker() {
 
 task localDockerTest(type:Exec, dependsOn: 'docker') {
     def str = "docker run --name test1 --rm --network=host --security-opt seccomp=unconfined ${project.dockerOwner}/${project.projectDir.getName()}:${project.version} -- java -version"
-    //println(str)
-    commandLine str.split(" ")
+    doLast {
+      println(str)
+      commandLine str.split(" ")
+    }
 }
 task localDockerRun(type:Exec,dependsOn: 'docker') {
     def str = "docker run --name test1 --rm --network=host --security-opt seccomp=unconfined ${project.dockerOwner}/${project.projectDir.getName()}:${project.version}"
-    //println(str)
-    commandLine str.split(" ")
+    doLast {
+      println(str)
+      commandLine str.split(" ")
+    }
 }
 
 
@@ -97,10 +101,34 @@ task prepareForBuildah(type: Copy) {
 task buildah(type: Exec, dependsOn: 'prepareForBuildah') {
     group "OCI"
     workingDir "${buildDir}/libs"
-    //println "Executing 'buildah' task in ${buildDir}"
-    commandLine "buildah", "bud", "-f", "Dockerfile", "-t", "${project.dockerOwner}/${project.projectDir.getName()}:${project.version}"
-    // 'buildah ls' to show built image
+
+    doFirst {
+      println "Executing 'buildah' task in ${buildDir}"
+    }
+    // OPV = owner/project:version
+    def OPV="${project.dockerOwner}/${project.projectDir.getName()}:${project.version}"
+    commandLine "buildah", "bud", "-f", "Dockerfile", "-t", "${OPV}"
+    doLast {
+      exec {
+        println "tagging for dockerHub also: docker.io/${OPV}"
+        commandLine "buildah tag localhost/${OPV} docker.io/${OPV}".split()
+      }
+      exec {
+        commandLine "buildah images ${OPV}".split()
+      }
+    }
 }
+
+// not doing dependsOn: buildah because that would take lengthy rebuild of image
+task buildahPushDockerHub(type: Exec) {
+    group "OCI"
+    workingDir "${buildDir}/libs"
+
+    // OPV = owner/project:version
+    def OPV="${project.dockerOwner}/${project.projectDir.getName()}:${project.version}"
+    commandLine "buildah push docker.io/${OPV}".split()
+}
+
 
 task podmanCleanup(type: Exec) {
     ignoreExitValue true
@@ -112,7 +140,12 @@ task podman(type: Exec) {
     //dependsOn "buildah"
     dependsOn podmanCleanup
 
-    //println "To cleanup, run 'podman rm ${project.name}'"
-    commandLine "podman", "run", "-p", "8080:8080", "-p", "8080:8080", "--name", "${project.name}", "${project.dockerOwner}/${project.projectDir.getName()}:${project.version}", "--", "java", "-version"
+    doFirst {
+      println "To cleanup, run 'podman rm ${project.name}'"
+    }
+
+    // OPV = owner/project:version
+    def OPV="${project.dockerOwner}/${project.projectDir.getName()}:${project.version}"
+    commandLine "podman", "run", "-p", "8080:8080", "-p", "8080:8080", "--name", "${project.name}", "localhost/${OPV}", "--", "java", "-version"
 
 }
