@@ -3,10 +3,8 @@ plugins {
 	id 'org.springframework.boot' version '3.0.12'
 	id 'io.spring.dependency-management' version '1.1.3'
 
-        // local docker plugin for building base image
+        // local docker plugin for building image
         id 'com.palantir.docker' version '0.35.0'
-        // jib for packaging up Spring Boot jar on top of base image
-        //id 'com.google.cloud.tools.jib' version '3.2.1'
 }
 
 group = 'org.fabianlee'
@@ -59,7 +57,22 @@ tasks.named('test') {
 
 // create minimal base image project for OS package and commands
 // https://plugins.gradle.org/plugin/com.palantir.docker
-docker {
+tasks.docker.dependsOn(bootJar)
+docker() {
     name "${project.dockerOwner}/${project.projectDir.getName()}:${project.version}"
     dockerfile file("$buildDir/resources/main/docker/Dockerfile")
+    files tasks.bootJar.outputs, 'README.md'
+    noCache false
+}
+
+
+task localDockerTest(type:Exec, dependsOn: 'docker') {
+    def str = "docker run --name test1 --rm --network=host --security-opt seccomp=unconfined ${project.dockerOwner}/${project.projectDir.getName()}:${project.version} -- java -version"
+    println(str)
+    commandLine str.split(" ")
+}
+task localDockerRun(type:Exec,dependsOn: 'docker') {
+    def str = "docker run --name test1 --rm --network=host --security-opt seccomp=unconfined ${project.dockerOwner}/${project.projectDir.getName()}:${project.version}"
+    println(str)
+    commandLine str.split(" ")
 }

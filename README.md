@@ -1,6 +1,43 @@
 # Example of SpringBoot webapp with Vault sidecar for secrets
 
 
+## Create bootJar and OCI image with Docker
+
+```
+./gradlew
+./gradlew bootJar
+./gradlew docker [-PdockerVersion=1.0.1 ]
+
+```
+
+# Creating tag
+
+```
+newtag=v1.0.1
+git commit -a -m "changes for new tag $newtag" && git push
+git tag $newtag && git push origin $newtag
+```
+
+# Deleting tag
+
+```
+# delete single local tag, then remote
+todel=v1.0.1; git tag -d $todel && git push -d origin $todel
+```
+
+# Deleting release
+
+```
+todel=v1.0.1
+
+# delete release and remote tag
+gh release delete $todel --cleanup-tag -y
+
+# delete local tag
+git tag -d $todel
+```
+
+
 ## Project initially created using Spring Starter
 
 ```

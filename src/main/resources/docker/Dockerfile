@@ -35,7 +35,7 @@ USER spring:spring
 EXPOSE 8080
 
 # files needed to run
-COPY build/libs/springbootwithvaultsidecar.jar springbootwithvaultsidecar.jar
+COPY springbootwithvaultsidecar.jar springbootwithvaultsidecar.jar
 COPY README.md .
 
 # for debugging
