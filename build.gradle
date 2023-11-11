@@ -107,11 +107,16 @@ task buildah(type: Exec, dependsOn: 'prepareForBuildah') {
     }
     // OPV = owner/project:version
     def OPV="${project.dockerOwner}/${project.projectDir.getName()}:${project.version}"
+    def OPV_latest="${project.dockerOwner}/${project.projectDir.getName()}:latest"
     commandLine "buildah", "bud", "-f", "Dockerfile", "-t", "${OPV}"
     doLast {
       exec {
         println "tagging for dockerHub also: docker.io/${OPV}"
         commandLine "buildah tag localhost/${OPV} docker.io/${OPV}".split()
+      }
+      exec {
+        println "tagging for dockerHub also: docker.io/${OPV_latest}"
+        commandLine "buildah tag localhost/${OPV} docker.io/${OPV_latest}".split()
       }
       exec {
         commandLine "buildah images ${OPV}".split()
@@ -122,11 +127,11 @@ task buildah(type: Exec, dependsOn: 'prepareForBuildah') {
 // not doing dependsOn: buildah because that would take lengthy rebuild of image
 task buildahPushDockerHub(type: Exec) {
     group "OCI"
-    workingDir "${buildDir}/libs"
 
     // OPV = owner/project:version
-    def OPV="${project.dockerOwner}/${project.projectDir.getName()}:${project.version}"
-    commandLine "buildah push docker.io/${OPV}".split()
+    def OPV_latest="${project.dockerOwner}/${project.projectDir.getName()}:latest"
+
+    commandLine "buildah push docker.io/${OPV_latest}".split()
 }
 
 
@@ -145,7 +150,7 @@ task podman(type: Exec) {
     }
 
     // OPV = owner/project:version
-    def OPV="${project.dockerOwner}/${project.projectDir.getName()}:${project.version}"
-    commandLine "podman", "run", "-p", "8080:8080", "-p", "8080:8080", "--name", "${project.name}", "localhost/${OPV}", "--", "java", "-version"
+    def OPV_latest="${project.dockerOwner}/${project.projectDir.getName()}:latest"
+    commandLine "podman", "run", "-p", "8080:8080", "-p", "8080:8080", "--name", "${project.name}", "localhost/${OPV_latest}", "--", "java", "-version"
 
 }

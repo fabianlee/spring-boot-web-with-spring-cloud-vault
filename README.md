@@ -37,6 +37,14 @@ gh release delete $todel --cleanup-tag -y
 git tag -d $todel
 ```
 
+# Generate image locally then push latest to DockerHub during development lifecycle
+
+```
+# makes this image avaible on DockerHub: fabianlee/spring-boot-with-vault-sidecar:latest
+buildah login --username <user> --password <password> docker.io
+./gradlew buildah ; ./gradlew buildahPushDockerHub
+```
+
 
 ## Project initially created using Spring Starter
 
