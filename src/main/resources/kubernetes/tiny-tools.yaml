@@ -41,7 +41,7 @@ spec:
         #vault.hashicorp.com/namespace: $namespace_vault # only available to Vault Enterprise
 
         # https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-sidecar#inject-secrets-into-the-pod
-        vault.hashicorp.com/agent-inject-secret-mysecret.txt: $vault_backend/$vault_context/$vault_profile
+        vault.hashicorp.com/agent-inject-secret-mysecret.dump: $vault_backend/$vault_context/$vault_profile
         vault.hashicorp.com/agent-inject-template-mysecret.txt: |
           {{- with secret "$vault_backend/$vault_context/$vault_profile" -}}
           {{- range ${DOLLAR_SIGN}k, ${DOLLAR_SIGN}v := .Data.data -}}
