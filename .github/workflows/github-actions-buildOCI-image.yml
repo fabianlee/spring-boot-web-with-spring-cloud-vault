@@ -75,7 +75,7 @@ jobs:
 
       # (CONDITIONAL) build using docker
       - name: Execute Gradle build of OCI with Docker
-        run: ./gradlew docker -PdockerVersion=${{ steps.getversion.outputs.VERSION }}
+        run: ./gradlew docker -Pversion=${{ steps.getversion.outputs.VERSION }}
         if: ${{ env.BUILD_OCI_WITH == 'docker' }}
       - name: list docker images available
         run: docker images
@@ -83,7 +83,7 @@ jobs:
 
       # (CONDITIONAL) build using buildah
       - name: Execute Gradle build of OCI with Buildah
-        run: ./gradlew buildah -PdockerVersion=${{ steps.getversion.outputs.VERSION }}
+        run: ./gradlew buildah -Pversion=${{ steps.getversion.outputs.VERSION }}
         if: ${{ env.BUILD_OCI_WITH == 'buildah' }}
       - name: list buildah images available
         run: buildah images

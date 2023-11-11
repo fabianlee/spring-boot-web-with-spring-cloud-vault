@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'org.fabianlee'
-version = '0.0.1'
+version = project.hasProperty('version') ? version : '1.0.0'
 
 // additional variables
 ext.dockerOwner = 'fabianlee'
@@ -68,11 +68,11 @@ docker() {
 
 task localDockerTest(type:Exec, dependsOn: 'docker') {
     def str = "docker run --name test1 --rm --network=host --security-opt seccomp=unconfined ${project.dockerOwner}/${project.projectDir.getName()}:${project.version} -- java -version"
-    println(str)
+    //println(str)
     commandLine str.split(" ")
 }
 task localDockerRun(type:Exec,dependsOn: 'docker') {
     def str = "docker run --name test1 --rm --network=host --security-opt seccomp=unconfined ${project.dockerOwner}/${project.projectDir.getName()}:${project.version}"
-    println(str)
+    //println(str)
     commandLine str.split(" ")
 }
