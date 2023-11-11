@@ -40,6 +40,8 @@ git tag -d $todel
 
 ## Project initially created using Spring Starter
 
+[Spring Starter Web UI](https://start.spring.io)
+
 ```
 # define variables
 id=spring-boot-with-vault-sidecar

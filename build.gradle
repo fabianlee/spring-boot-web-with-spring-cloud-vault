@@ -76,3 +76,43 @@ task localDockerRun(type:Exec,dependsOn: 'docker') {
     //println(str)
     commandLine str.split(" ")
 }
+
+
+
+task prepareREADMEForBuildah(type: Copy) {
+    group "OCI"
+    from "."
+    include "README.md"
+    into "$buildDir/libs"
+}
+// takes Dockerfile, places into buildDir
+task prepareForBuildah(type: Copy) {
+    group "OCI"
+    dependsOn ("bootJar","prepareREADMEForBuildah")
+    from "src/main/resources/docker"
+    include "Dockerfile"
+    into "$buildDir/libs"
+}
+
+task buildah(type: Exec, dependsOn: 'prepareForBuildah') {
+    group "OCI"
+    workingDir "${buildDir}/libs"
+    //println "Executing 'buildah' task in ${buildDir}"
+    commandLine "buildah", "bud", "-f", "Dockerfile", "-t", "${project.dockerOwner}/${project.projectDir.getName()}:${project.version}"
+    // 'buildah ls' to show built image
+}
+
+task podmanCleanup(type: Exec) {
+    ignoreExitValue true
+    commandLine "podman", "rm", "${project.name}"
+}
+task podman(type: Exec) {
+    group "OCI"
+    // buildah does not cache, so do not force rebuild
+    //dependsOn "buildah"
+    dependsOn podmanCleanup
+
+    //println "To cleanup, run 'podman rm ${project.name}'"
+    commandLine "podman", "run", "-p", "8080:8080", "-p", "8080:8080", "--name", "${project.name}", "${project.dockerOwner}/${project.projectDir.getName()}:${project.version}", "--", "java", "-version"
+
+}
