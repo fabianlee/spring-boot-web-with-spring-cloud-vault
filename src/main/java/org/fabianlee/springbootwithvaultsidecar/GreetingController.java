@@ -13,10 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class GreetingController {
 	
-	@Autowired
-	private VaultTemplate vaultTemplate;
-	VaultResponse response = vaultTemplate
-	        .opsForKeyValue("secret", KeyValueBackend.KV_2).get("webapp/config");
+	//@Autowired
+	//private VaultTemplate vaultTemplate;
 	
 	@Value("${config.foo")
 	String foo = "foo";
@@ -43,11 +41,13 @@ public class GreetingController {
 		return "foo/username/password: " + getVaultSecretsFromConfig();
 	}
 	
-	@GetMapping("/secret3")
-	@ResponseBody
-	public String secret3() {
-		return "foo/username/password: " + response.getData().get("foo") + "," + response.getData().get("username");
-	}
+	//@GetMapping("/secret3")
+	//@ResponseBody
+	//public String secret3() {
+	//	VaultResponse response = vaultTemplate
+	//	        .opsForKeyValue("secret", KeyValueBackend.KV_2).get("webapp/config");
+	//	return "foo/username/password: " + response.getData().get("foo") + "," + response.getData().get("username");
+	//}
 	
 	@Autowired Environment env;
 	public String getVaultSecretsFromEnv() {
