@@ -1,0 +1,121 @@
+name: build-oci-image
+
+run-name: Build OCI Image for Java Spring Boot built with Gradle
+
+on:
+  push:
+    #branches: ['main']
+    tags: ['v*']
+  #pull_request:
+  #  branches: ['main']
+
+env:
+  BUILD_OCI_WITH: buildah # docker|buildah
+  PUSH_TO_DOCKERHUB: false
+  PUSH_TO_GITHUBCR: true
+  GH_REGISTRY: ghcr.io # Github Container Registry
+  FULL_IMAGE_NAME: ${{ github.repository }} # full image name: owner/image
+
+jobs:
+  build-oci-image:
+    # https://github.com/actions/runner-images
+    runs-on: ubuntu-22.04
+
+    # https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
+    permissions:
+      contents: read # for actions/checkout
+      packages: write # for OCI build
+
+    steps:
+
+      # debug
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event from ${{ github.actor }}."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+
+      # checkout
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      # debug
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+
+      # debug github context and env
+      - name: Dump env
+        run: env | sort
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      # Java environment
+      - name: setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: adopt
+          cache: gradle
+
+      - name: strip off 'v' from GITHUB_REF_NAME
+        id: getversion
+        run: |
+          VERSION=${GITHUB_REF_NAME}
+          echo "VERSION=${VERSION#v}" >> $GITHUB_OUTPUT
+      - run: echo version for image ${{ steps.getversion.outputs.VERSION }}
+  
+      - name: Validate Gradle wrapper matches official SHA-256 checksums for security
+        uses: gradle/wrapper-validation-action@v1
+
+      - run: echo OCI image build tool ${{ env.BUILD_OCI_WITH }}
+
+      # (CONDITIONAL) build using docker
+      - name: Execute Gradle build of OCI with Docker
+        run: ./gradlew docker -PdockerVersion=${{ steps.getversion.outputs.VERSION }}
+        if: ${{ env.BUILD_OCI_WITH == 'docker' }}
+      - name: list docker images available
+        run: docker images
+        if: ${{ env.BUILD_OCI_WITH == 'docker' }}
+
+      # (CONDITIONAL) build using buildah
+      - name: Execute Gradle build of OCI with Buildah
+        run: ./gradlew buildah -PdockerVersion=${{ steps.getversion.outputs.VERSION }}
+        if: ${{ env.BUILD_OCI_WITH == 'buildah' }}
+      - name: list buildah images available
+        run: buildah images
+        if: ${{ env.BUILD_OCI_WITH == 'buildah' }}
+
+      # Push to Github CR
+      - run: echo push to Github Container Registry ${{ env.PUSH_TO_GITHUBCR }}
+      - name: Buildah push to Github Container Registry
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.FULL_IMAGE_NAME }}
+          tags: ${{ steps.getversion.outputs.VERSION }} latest
+          registry: ${{ env.GH_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          extra-args: |
+            --disable-content-trust
+        if: ${{ env.PUSH_TO_GITHUBCR == 'true' }}
+
+      # Push to Docker Hub
+      - run: echo push to Docker Hub ${{ env.PUSH_TO_DOCKERHUB }}
+      - name: Buildah push to Docker Hub
+        uses: redhat-actions/push-to-registry@v2
+        env:
+          USER: ${{ secrets.DOCKER_USERNAME }}
+          PASS: ${{ secrets.DOCKER_TOKEN }}
+        with:
+          image: ${{ env.FULL_IMAGE_NAME }}
+          tags: ${{ steps.getversion.outputs.VERSION }} latest
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+          extra-args: |
+            --disable-content-trust
+        if: ${{ env.PUSH_TO_DOCKERHUB == 'true' && env.USER!='' && env.PASS!='' }}
