@@ -14,5 +14,5 @@
     <logger name="org.fabianlee.springbootwithvaultsidecar" level="info" additivity="false">
         <appender-ref ref="stdout" />
     </logger>
-
+    
 </configuration>

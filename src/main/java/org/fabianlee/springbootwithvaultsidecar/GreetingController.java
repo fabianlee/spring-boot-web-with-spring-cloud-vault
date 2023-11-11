@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class GreetingController {
 	
+	@Autowired Environment env;
+	
 	@GetMapping("/")
 	@ResponseBody
 	public String hello() {
@@ -21,9 +23,7 @@ public class GreetingController {
 	public String secret() {
 		return "foo/username/password: " + getVaultSecretsFromEnv();
 	}
-
-	@Lazy
-	@Autowired Environment env;
+	
 	public String getVaultSecretsFromEnv() {
 		return env.getProperty("foo") + "," + env.getProperty("username") + "," + env.getProperty("password");
 	}

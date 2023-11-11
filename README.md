@@ -45,6 +45,12 @@ buildah login --username <user> --password <password> docker.io
 ./gradlew buildah ; ./gradlew buildahPushDockerHub
 ```
 
+# Restart deployment
+
+```
+kubectl rollout restart deployment spring-boot-web-sidecar -n vault && kubectl rollout status deployment spring-boot-web-sidecar -n vault --timeout=90s
+```
+
 
 ## Project initially created using Spring Starter
 

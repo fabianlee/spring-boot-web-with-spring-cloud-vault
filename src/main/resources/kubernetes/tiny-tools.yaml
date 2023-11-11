@@ -54,7 +54,8 @@ spec:
 
       containers:
       - name: main
-        image: ghcr.io/fabianlee/spring-boot-with-vault-sidecar:1.0.0
+        image: ghcr.io/fabianlee/spring-boot-with-vault-sidecar:latest
+        imagePullPolicy: Always
         resources:
           requests:
             memory: "128Mi"

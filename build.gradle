@@ -65,6 +65,29 @@ docker() {
     noCache false
 }
 
+// best to use this task (versus buildahPushDockerHub) for development cycle because docker caches intermediate layers 
+task dockerPushDockerHub(type: Exec, dependsOn: 'docker') {
+    group "OCI"
+
+    // OPV = owner/project:version
+    def OPV="${project.dockerOwner}/${project.projectDir.getName()}:${project.version}"
+    def OPV_latest="${project.dockerOwner}/${project.projectDir.getName()}:latest"
+
+    doFirst {
+      exec {
+        commandLine "docker tag ${OPV} docker.io/${OPV_latest}".split()
+      }
+    }
+
+    commandLine "docker push docker.io/${OPV_latest}".split()
+
+    doLast {
+      exec {
+        commandLine "docker images ${OPV}".split()
+      }
+    }
+}
+
 
 task localDockerTest(type:Exec, dependsOn: 'docker') {
     def str = "docker run --name test1 --rm --network=host --security-opt seccomp=unconfined ${project.dockerOwner}/${project.projectDir.getName()}:${project.version} -- java -version"
@@ -124,7 +147,7 @@ task buildah(type: Exec, dependsOn: 'prepareForBuildah') {
     }
 }
 
-// not doing dependsOn: buildah because that would take lengthy rebuild of image
+// not doing dependsOn: buildah because that would take lengthy rebuild of image (buildah does not cache)
 task buildahPushDockerHub(type: Exec) {
     group "OCI"
 
