@@ -91,11 +91,11 @@ jobs:
 
       # Push to Github CR
       - run: echo push to Github Container Registry ${{ env.PUSH_TO_GITHUBCR }}
-      - name: Buildah push to Github Container Registry
+      - name: push to Github Container Registry
         uses: redhat-actions/push-to-registry@v2
         with:
           image: ${{ env.FULL_IMAGE_NAME }}
-          tags: ${{ steps.getversion.outputs.VERSION }} latest
+          tags: ${{ steps.getversion.outputs.VERSION }}
           registry: ${{ env.GH_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
