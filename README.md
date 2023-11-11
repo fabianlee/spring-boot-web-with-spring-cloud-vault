@@ -1,4 +1,4 @@
-# Example of SpringBoot webapp with Vault sidecar for secrets
+# SpringBoot webapp with Vault sidecar for secrets
 
 
 ## Create bootJar and OCI image with Docker
