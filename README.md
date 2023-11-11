@@ -6,7 +6,7 @@
 ```
 ./gradlew
 ./gradlew bootJar
-./gradlew docker [-PdockerVersion=1.0.1 ]
+./gradlew docker [-Pversion=1.0.1 ]
 
 ```
 
