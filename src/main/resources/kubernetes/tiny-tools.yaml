@@ -6,7 +6,7 @@
 #export namespace_k8s=vault
 #export service_account_k8s=vault-auth
 #export auth_path_vault=auth/kubernetes
-#export path_secrets_vault=secret/webapp/config
+#export vault_backend=secret; export vault_context=webapp; export vault_profile=config
 #
 # generate:
 # cat tiny-tools.yaml | DOLLAR_SIGN='$' envsubst | kubectl apply -f -
@@ -41,9 +41,9 @@ spec:
         #vault.hashicorp.com/namespace: $namespace_vault # only available to Vault Enterprise
 
         # https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-sidecar#inject-secrets-into-the-pod
-        vault.hashicorp.com/agent-inject-secret-mysecret.txt: $path_secrets_vault
+        vault.hashicorp.com/agent-inject-secret-mysecret.txt: $vault_backend/$vault_context/$vault_profile
         vault.hashicorp.com/agent-inject-template-mysecret.txt: |
-          {{- with secret "$path_secrets_vault" -}}
+          {{- with secret "$vault_backend/$vault_context/$vault_profile" -}}
           {{- range ${DOLLAR_SIGN}k, ${DOLLAR_SIGN}v := .Data.data -}}
           {{ ${DOLLAR_SIGN}k }} = {{ ${DOLLAR_SIGN}v }}
           {{ end }}
@@ -64,6 +64,15 @@ spec:
         env:
         - name: JAVA_OPTS
           value: "-Xms:128m -Xmx:256m"
+        # externalized variables used in Spring application.properties
+        - name: VAULT_BACKEND
+          value: $vault_backend
+        - name: VAULT_CONTEXT
+          value: $vault_context
+        - name: VAULT_PROFILE
+          value: $vault_profile
+        - name: VAULT_ROLE
+          value: $role
         livenessProbe:
           httpGet:
             path: /
