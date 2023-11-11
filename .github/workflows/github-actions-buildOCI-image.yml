@@ -119,3 +119,4 @@ jobs:
           extra-args: |
             --disable-content-trust
         if: ${{ env.PUSH_TO_DOCKERHUB == 'true' && env.USER!='' && env.PASS!='' }}
+
