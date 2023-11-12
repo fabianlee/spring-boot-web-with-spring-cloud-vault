@@ -10,9 +10,9 @@ This app can fetch a secret from a remote or in-cluster Vault server without the
  Vault sidecar by using the Cloud Vault libraries.  Generally, it is preferrable to communicate
  direcly to Vault so no intermediate secret representations are stored.
 
-blog installing a dev Vault server into a Kubernetes cluster:
+blog: https://fabianlee.org/2023/11/12/vault-spring-boot-web-app-using-spring-cloud-vault-to-fetch-vault-secrets/
 
-blog describing this Java Spring Boot web app:  
+blog: https://fabianlee.org/2023/11/10/vault-hashicorp-vault-deployed-into-kubernetes-cluster-for-secret-management/
 
 # Adding Vault sidecar
 
