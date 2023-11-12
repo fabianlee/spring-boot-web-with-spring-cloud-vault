@@ -29,7 +29,38 @@ spec:
       labels:
         app: $app
       annotations:
-        vault.hashicorp.com/agent-inject: 'false'
+        #sidecar.istio.io/inject: "true"
+
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-init-first: 'false'
+        vault.hashicorp.com/agent-cache-enable: 'true'
+        vault.hashicorp.com/auth-type: 'kubernetes'
+        vault.hashicorp.com/auth-config-path: '/var/run/secrets/kubernetes.io/serviceaccount/token'
+        vault.hashicorp.com/remove-jwt-after-reading : 'false'
+        vault.hashicorp.com/auth-path: $auth_path_vault
+        vault.hashicorp.com/role: $vault_role
+        #vault.hashicorp.com/namespace: $namespace_vault # only available to Vault Enterprise
+
+        # https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-sidecar#inject-secrets-into-the-pod
+        vault.hashicorp.com/agent-inject-secret-mysecret: $vault_backend/$vault_context/$vault_profile
+        vault.hashicorp.com/agent-inject-file-mysecret: mysecret.dump
+        
+        # embed into filesystem of container
+        vault.hashicorp.com/agent-inject-template-mysecret.properties: |
+          {{- with secret "$vault_backend/$vault_context/$vault_profile" -}}
+          {{- range ${DOLLAR_SIGN}k, ${DOLLAR_SIGN}v := .Data.data -}}
+          {{ ${DOLLAR_SIGN}k }} = {{ ${DOLLAR_SIGN}v }}
+          {{ end }}
+          {{- end -}}
+          
+        # embed as system environment variable of container
+        vault.hashicorp.com/agent-inject-template-config: |
+          {{- with secret "$vault_backend/$vault_context/$vault_profile" -}}
+          {{- range ${DOLLAR_SIGN}k, ${DOLLAR_SIGN}v := .Data.data -}}
+          {{ export MYENV_${DOLLAR_SIGN}k }}="{{ ${DOLLAR_SIGN}v" }}
+          {{ end }}
+          {{- end -}}
+
     spec:
       serviceAccountName: $service_account_k8s
 
