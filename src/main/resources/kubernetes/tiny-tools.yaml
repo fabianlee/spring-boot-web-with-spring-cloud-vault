@@ -42,7 +42,7 @@ spec:
 
         # https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-sidecar#inject-secrets-into-the-pod
         vault.hashicorp.com/agent-inject-secret-mysecret.dump: $vault_backend/$vault_context/$vault_profile
-        vault.hashicorp.com/agent-inject-template-mysecret.txt: |
+        vault.hashicorp.com/agent-inject-template-mysecret.properties: |
           {{- with secret "$vault_backend/$vault_context/$vault_profile" -}}
           {{- range ${DOLLAR_SIGN}k, ${DOLLAR_SIGN}v := .Data.data -}}
           {{ ${DOLLAR_SIGN}k }} = {{ ${DOLLAR_SIGN}v }}

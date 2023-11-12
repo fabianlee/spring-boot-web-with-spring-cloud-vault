@@ -14,13 +14,15 @@ public class GreetingController {
 	
 	@Autowired Environment env;
 	@Autowired SecretService secret;
+	@Autowired MySecretPropertiesFile secretFile;
 	
 	@GetMapping("/")
 	@ResponseBody
 	public String hello() {
 		return "Hello, world!\n" +
 				"<a href=/secret>Show all keys of secret at " + getFullSecretPath() + "</a>\n" +
-				"<a href=/secretConfigData>Show foo/username/password loaded by Spring ConfigData</a>"; 
+				"<a href=/secretConfigData>Show foo/username/password loaded by Spring ConfigData</a>\n" +
+				"<a href=/secretFile>Show file created by vault injector at /vault/secrets/mysecret.properties</a>\n"; 
 	}
 	
 	@GetMapping("/secret")
@@ -31,6 +33,24 @@ public class GreetingController {
 
 		// fetch secret from Vault
 		Properties props = secret.getSecretAsProperties(getFullSecretPath());
+
+		Iterator propit = props.keySet().iterator();
+		while(propit.hasNext()) {
+			String k = (String)propit.next();
+			String v = (String)props.getProperty(k);
+			sb.append(k + "=" + v + "\n");
+		}
+		return sb.toString();
+	}
+	
+	@GetMapping("/secretFile")
+	@ResponseBody
+	public String secretFile() {
+		
+		StringBuilder sb = new StringBuilder("The secret is loaded from the file: /vault/secrets/mysecret.properties:\n");
+
+		// fetch secret from file path
+		Properties props = secretFile.getAllProperties();
 
 		Iterator propit = props.keySet().iterator();
 		while(propit.hasNext()) {
