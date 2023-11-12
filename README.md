@@ -40,7 +40,7 @@ This project also supports pointing at the Vault sidecar as well (http://localho
 
 ```
 newtag=v1.0.1
-git commit -a -m "changes for new tag $newtag" && git push
+git commit -a -m "changes for new tag $newtag" && git push -o ci.skip
 git tag $newtag && git push origin $newtag
 ```
 

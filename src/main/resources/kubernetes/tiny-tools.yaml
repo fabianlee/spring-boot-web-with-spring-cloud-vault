@@ -34,8 +34,8 @@ spec:
 
       containers:
       - name: main
-        #image: ghcr.io/fabianlee/spring-boot-web-with-spring-cloud-vault:1.0.0
-        image: docker.io/fabianlee/spring-boot-web-with-spring-cloud-vault:latest
+        image: ghcr.io/fabianlee/spring-boot-web-with-spring-cloud-vault:1.0.0
+        #image: docker.io/fabianlee/spring-boot-web-with-spring-cloud-vault:latest
         imagePullPolicy: Always
         resources:
           requests:
