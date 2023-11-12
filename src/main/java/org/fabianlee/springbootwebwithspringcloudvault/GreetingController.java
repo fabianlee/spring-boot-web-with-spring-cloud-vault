@@ -27,7 +27,7 @@ public class GreetingController {
 		return "Hello, world!\n" +
 				"<a href=/secret>Show all keys of secret at " + getFullSecretPath() + "</a>\n" +
 				"<a href=/secretConfigData>Show foo/username/password loaded by Spring ConfigData</a>\n" +
-				"<a href=/secretFile>Show file created by vault injector at /vault/secrets/mysecret.properties</a>\n"; 
+				"<a href=/secretSidecar>Show file created by vault sidecar at /vault/secrets/mysecret.properties</a>\n"; 
 	}
 	
 	@GetMapping("/secret")
@@ -51,29 +51,6 @@ public class GreetingController {
 		}
 		return sb.toString();
 	}
-	
-	@GetMapping("/secretFile")
-	@ResponseBody
-	public String secretFile() {
-		
-		StringBuilder sb = new StringBuilder("The secret is loaded from the Vault sidecar injected file: /vault/secrets/mysecret.properties:\n");
-
-		// fetch secret from file path
-		Properties props = secretFile.getAllProperties();
-
-		if (props.isEmpty()) {
-			sb.append("The file '/vault/secrets/mysecret.properties' does not exist or have any properties, maybe you are not running the vault sidecar?\n");
-		}else {
-			Iterator propit = props.keySet().iterator();
-			while(propit.hasNext()) {
-				String k = (String)propit.next();
-				String v = (String)props.getProperty(k);
-				sb.append(k + "=" + v + "\n");
-			}
-		}
-		return sb.toString();
-	}
-	
 	
 	@GetMapping("/secretConfigData")
 	@ResponseBody
@@ -109,6 +86,30 @@ public class GreetingController {
 		
 		return sb.toString();
 	}
+	
+	@GetMapping("/secretSidecar")
+	@ResponseBody
+	public String secretFile() {
+		
+		StringBuilder sb = new StringBuilder("The secret is loaded from the Vault sidecar injected file: /vault/secrets/mysecret.properties:\n");
+
+		// fetch secret from file path
+		Properties props = secretFile.getAllProperties();
+
+		if (props.isEmpty()) {
+			sb.append("The file '/vault/secrets/mysecret.properties' does not exist or have any properties, maybe you are not running the vault sidecar?\n");
+		}else {
+			Iterator propit = props.keySet().iterator();
+			while(propit.hasNext()) {
+				String k = (String)propit.next();
+				String v = (String)props.getProperty(k);
+				sb.append(k + "=" + v + "\n");
+			}
+		}
+		return sb.toString();
+	}
+	
+	
 	
 	private String getFullSecretPath() { 
 		// 'data' must be inserted for Vault kv2
