@@ -6,6 +6,7 @@
 #export namespace_k8s=vault
 #export service_account_k8s=vault-auth
 #export auth_path_vault=auth/kubernetes
+#export vault_uri=http://localhost:8200
 #export vault_backend=secret; export vault_context=webapp; export vault_profile=config
 #
 # generate:
@@ -65,6 +66,8 @@ spec:
         - name: JAVA_OPTS
           value: "-Xms:128m -Xmx:256m"
         # externalized variables used in Spring application.properties
+        - name: VAULT_URI
+          value: $vault_uri
         - name: VAULT_BACKEND
           value: $vault_backend
         - name: VAULT_CONTEXT

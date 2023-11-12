@@ -56,13 +56,13 @@ public class GreetingController {
 	@ResponseBody
 	public String secretFile() {
 		
-		StringBuilder sb = new StringBuilder("The secret is loaded from the file: /vault/secrets/mysecret.properties:\n");
+		StringBuilder sb = new StringBuilder("The secret is loaded from the Vault sidecar injected file: /vault/secrets/mysecret.properties:\n");
 
 		// fetch secret from file path
 		Properties props = secretFile.getAllProperties();
 
 		if (props.isEmpty()) {
-			sb.append("The file '/vault/secrets/mysecret.properties' does not exist or have any properties, maybe you are not running the vault sidecar?");
+			sb.append("The file '/vault/secrets/mysecret.properties' does not exist or have any properties, maybe you are not running the vault sidecar?\n");
 		}else {
 			Iterator propit = props.keySet().iterator();
 			while(propit.hasNext()) {
@@ -95,7 +95,8 @@ public class GreetingController {
 		
 		Properties props = SpringEnvironmentUtils.getAllKnownProperties(env,targetPropertySourceType,targetVaultPath);
 		if (props.isEmpty()) {
-			sb.append("The file '/vault/secrets/mysecret.properties' does not exist or have any properties, maybe you are not running the vault sidecar?");
+			sb.append("The ConfigData secret loaded per the values in the Spring application.properties does not exist: " + targetVaultPath + "\n");
+			sb.append("Maybe the values in spring.cloud.vault.kv.{backend,default,profiles} are configured wrong for the service account/role?\n");
 		}else {
 			Iterator propit = props.keySet().iterator();
 			while(propit.hasNext()) {
