@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class GreetingController {
 	
 	@Autowired Environment env;
-	@Autowired SecretService secret;
+	@Autowired MyVaultTemplateService secret;
 	@Autowired MySecretPropertiesFile secretFile;
 	
 	@GetMapping("/")

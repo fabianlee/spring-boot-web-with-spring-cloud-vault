@@ -10,7 +10,7 @@ import org.springframework.vault.core.VaultTemplate;
 import org.springframework.vault.support.VaultResponse;
 
 @Service
-public class SecretService {
+public class MyVaultTemplateService {
 	
 	@Autowired
     private VaultTemplate vaultTemplate;
