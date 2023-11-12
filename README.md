@@ -1,10 +1,10 @@
-# Spring Boot web app with Cloud Vault library fetch secrets directly from HashiCorp Vault server
+# Spring Boot web using Cloud Vault library to fetch secrets directly from HashiCorp Vault server
 
 This project is a Java Spring Boot web application that uses the Cloud Vault libraries
 to fetch a secret directly from a HashiCorp Vault server.  
 
 This code assumes the Vault Server uses the Kubernetes auth method, which means the 
-Spring Boot web app should be deployed into a Kubernetes cluster running under a specific service account.
+Spring Boot web app should be deployed into a Kubernetes cluster running under a specific Kubernetes service account so it presents the correct JWT.
 
 This app can fetch a secret from a remote or in-cluster Vault server without the need for a
  Vault sidecar by using the Cloud Vault libraries.  Generally, it is preferrable to communicate
