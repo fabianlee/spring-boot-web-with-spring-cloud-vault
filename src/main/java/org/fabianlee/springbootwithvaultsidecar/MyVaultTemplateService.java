@@ -1,4 +1,9 @@
 package org.fabianlee.springbootwithvaultsidecar;
+/**
+ * The VaultTemplate object allows us to make calls to the Vault server
+ * This class uses it to load a secret, then list the keys in the secret
+ */
+
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;

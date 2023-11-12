@@ -1,4 +1,7 @@
 package org.fabianlee.springbootwithvaultsidecar;
+/**
+ * Web endpoint for retrieving the Vault secret and its keys using various methods
+ */
 
 import java.util.Iterator;
 import java.util.Properties;

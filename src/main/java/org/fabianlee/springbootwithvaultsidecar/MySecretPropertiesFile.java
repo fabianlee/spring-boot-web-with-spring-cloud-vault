@@ -1,4 +1,10 @@
 package org.fabianlee.springbootwithvaultsidecar;
+/**
+ * The manifest yaml has an annotation that creates a properties file inside the container:
+ * vault.hashicorp.com/agent-inject-template-mysecret.properties
+ * 
+ * This class loads that file from the container filesystem
+ */
 
 import java.util.Properties;
 
