@@ -10,6 +10,10 @@ This app can fetch a secret from a remote or in-cluster Vault server without the
  Vault sidecar by using the Cloud Vault libraries.  Generally, it is preferrable to communicate
  direcly to Vault so no intermediate secret representations are stored.
 
+blog installing a dev Vault server into a Kubernetes cluster:
+
+blog describing this Java Spring Boot web app:  
+
 # Adding Vault sidecar
 
 Even though the Spring Cloud Vault libraries allow a Spring application to fetch secrets directly from a Vault server, 
@@ -21,10 +25,6 @@ there are a multiple reasons you may want still to run a Vault sidecar:
 
 This project also supports pointing at the Vault sidecar as well (http://localhost:8082).
 
-
-blog describing how to install a deveopment Vault server into a Kubernetes cluster:
-
-blog describing this Java Spring Boot web app:  
 
 
 ## Create bootJar and OCI image with Docker
