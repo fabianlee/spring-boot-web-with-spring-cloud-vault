@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,11 +39,15 @@ public class GreetingController {
 		// fetch secret from Vault
 		Properties props = secret.getSecretAsProperties(getFullSecretPath());
 
-		Iterator propit = props.keySet().iterator();
-		while(propit.hasNext()) {
-			String k = (String)propit.next();
-			String v = (String)props.getProperty(k);
-			sb.append(k + "=" + v + "\n");
+		if (props.isEmpty()) {
+			sb.append("There must have been an error fetching the secret from Vault: " + getFullSecretPath());
+		}else {
+			Iterator propit = props.keySet().iterator();
+			while(propit.hasNext()) {
+				String k = (String)propit.next();
+				String v = (String)props.getProperty(k);
+				sb.append(k + "=" + v + "\n");
+			}
 		}
 		return sb.toString();
 	}
@@ -55,11 +61,15 @@ public class GreetingController {
 		// fetch secret from file path
 		Properties props = secretFile.getAllProperties();
 
-		Iterator propit = props.keySet().iterator();
-		while(propit.hasNext()) {
-			String k = (String)propit.next();
-			String v = (String)props.getProperty(k);
-			sb.append(k + "=" + v + "\n");
+		if (props.isEmpty()) {
+			sb.append("The file '/vault/secrets/mysecret.properties' does not exist or have any properties, maybe you are not running the vault sidecar?");
+		}else {
+			Iterator propit = props.keySet().iterator();
+			while(propit.hasNext()) {
+				String k = (String)propit.next();
+				String v = (String)props.getProperty(k);
+				sb.append(k + "=" + v + "\n");
+			}
 		}
 		return sb.toString();
 	}
@@ -70,11 +80,31 @@ public class GreetingController {
 	public String secretConfigData() {
 		
 		//https://docs.spring.io/spring-cloud-vault/reference/config-data.html
-		StringBuilder sb = new StringBuilder("The secret is loaded by ConfigData based on application.properties:\n");
+		StringBuilder sb = new StringBuilder("The secret is loaded by ConfigData based on Spring application.properties settings:\n");
+
+		// COULD return keys of secret very simply with env.getProperty
+		// BUT this would require knowing the key names of the Vault secret ahead of time
+		//sb.append("foo=" + env.getProperty("foo") + "\n");
+		//sb.append("username=" + env.getProperty("username") + "\n");
+		//sb.append("password=" + env.getProperty("password") + "\n");
+
+		// We will instead use the general way of listing all the keys in the secret
+		String targetPropertySourceType = "org.springframework.vault.core.env.LeaseAwareVaultPropertySource";
+		// notice this is intentionally without '/data/' inserted
+		String targetVaultPath = env.getProperty("VAULT_BACKEND") + "/" + env.getProperty("VAULT_CONTEXT") + "/" + env.getProperty("VAULT_PROFILE");
 		
-		sb.append("foo=" + env.getProperty("foo") + "\n");
-		sb.append("username=" + env.getProperty("username") + "\n");
-		sb.append("password=" + env.getProperty("password") + "\n");
+		Properties props = SpringEnvironmentUtils.getAllKnownProperties(env,targetPropertySourceType,targetVaultPath);
+		if (props.isEmpty()) {
+			sb.append("The file '/vault/secrets/mysecret.properties' does not exist or have any properties, maybe you are not running the vault sidecar?");
+		}else {
+			Iterator propit = props.keySet().iterator();
+			while(propit.hasNext()) {
+				String k = (String)propit.next();
+				String v = (String)props.getProperty(k);
+				sb.append(k + "=" + v + "\n");
+			}
+		}
+		
 		
 		return sb.toString();
 	}
@@ -86,7 +116,5 @@ public class GreetingController {
 				env.getProperty("VAULT_CONTEXT") + "/" + 
 				env.getProperty("VAULT_PROFILE");
 	}
-	
-
 
 }
