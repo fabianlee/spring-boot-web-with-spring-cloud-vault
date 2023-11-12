@@ -35,11 +35,11 @@ USER spring:spring
 EXPOSE 8080
 
 # files needed to run
-COPY springbootwithvaultsidecar.jar springbootwithvaultsidecar.jar
+COPY springbootwebwithspringcloudvault.jar springbootwebwithspringcloudvault.jar
 COPY README.md .
 
 # for debugging
 #CMD ["/bin/bash"]
-CMD ["java","-jar","springbootwithvaultsidecar.jar"]
+CMD ["java","-jar","springbootwebwithspringcloudvault.jar"]
 
 

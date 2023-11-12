@@ -1,4 +1,4 @@
-package org.fabianlee.springbootwithvaultsidecar;
+package org.fabianlee.springbootwebwithspringcloudvault;
 /**
  * Web endpoint for retrieving the Vault secret and its keys using various methods
  */

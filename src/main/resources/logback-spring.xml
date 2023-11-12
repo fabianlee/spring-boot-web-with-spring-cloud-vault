@@ -11,7 +11,7 @@
         <appender-ref ref="stdout"/>
     </root>
 
-    <logger name="org.fabianlee.springbootwithvaultsidecar" level="info" additivity="false">
+    <logger name="org.fabianlee" level="info" additivity="false">
         <appender-ref ref="stdout" />
     </logger>
     

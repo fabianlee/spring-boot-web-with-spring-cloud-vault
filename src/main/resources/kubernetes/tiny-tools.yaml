@@ -2,7 +2,7 @@
 # Used as template for sidecar injection with HashiCorp Vault for secret access
 #
 #export role=myrole
-#export app=spring-boot-web-sidecar
+#export app=spring-boot-web-vault
 #export namespace_k8s=vault
 #export service_account_k8s=vault-auth
 #export auth_path_vault=auth/kubernetes
@@ -55,7 +55,7 @@ spec:
 
       containers:
       - name: main
-        image: ghcr.io/fabianlee/spring-boot-with-vault-sidecar:latest
+        image: ghcr.io/fabianlee/spring-boot-web-with-spring-cloud-vault:latest
         imagePullPolicy: Always
         resources:
           requests:

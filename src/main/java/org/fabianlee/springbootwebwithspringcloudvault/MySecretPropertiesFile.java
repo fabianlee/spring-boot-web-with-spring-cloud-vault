@@ -1,4 +1,4 @@
-package org.fabianlee.springbootwithvaultsidecar;
+package org.fabianlee.springbootwebwithspringcloudvault;
 /**
  * The manifest yaml has an annotation that creates a properties file inside the container:
  * vault.hashicorp.com/agent-inject-template-mysecret.properties

@@ -1,4 +1,4 @@
-package org.fabianlee.springbootwithvaultsidecar;
+package org.fabianlee.springbootwebwithspringcloudvault;
 /**
  * The VaultTemplate object allows us to make calls to the Vault server
  * This class uses it to load a secret, then list the keys in the secret

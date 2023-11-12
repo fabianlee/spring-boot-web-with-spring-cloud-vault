@@ -1,4 +1,30 @@
-# SpringBoot webapp with Vault sidecar for secrets
+# Spring Boot web app with Cloud Vault library fetch secrets directly from HashiCorp Vault server
+
+This project is a Java Spring Boot web application that uses the Cloud Vault libraries
+to fetch a secret directly from a HashiCorp Vault server.  
+
+This code assumes the Vault Server uses the Kubernetes auth method, which means the 
+Spring Boot web app should be deployed into a Kubernetes cluster running under a specific service account.
+
+This app can fetch a secret from a remote or in-cluster Vault server without the need for a
+ Vault sidecar by using the Cloud Vault libraries.  Generally, it is preferrable to communicate
+ direcly to Vault so no intermediate secret representations are stored.
+
+# Adding Vault sidecar
+
+Even though the Spring Cloud Vault libraries allow a Spring application to fetch secrets directly from a Vault server, 
+there are a multiple reasons you may want still to run a Vault sidecar:
+
+  * Your particular app language does not have a fully-featured Vault client library
+  * You want to shield your application from Vault server configuration details
+  * You have a legacy application that must continue reading config/secrets from the filesystem/environment
+
+This project also supports pointing at the Vault sidecar as well (http://localhost:8082).
+
+
+blog describing how to install a deveopment Vault server into a Kubernetes cluster:
+
+blog describing this Java Spring Boot web app:  
 
 
 ## Create bootJar and OCI image with Docker
@@ -40,7 +66,7 @@ git tag -d $todel
 # Generate image locally then push latest to DockerHub during development lifecycle
 
 ```
-# makes this image avaible on DockerHub: fabianlee/spring-boot-with-vault-sidecar:latest
+# makes this image avaible on DockerHub: fabianlee/spring-boot-web-with-spring-cloud-vault:latest
 buildah login --username <user> --password <password> docker.io
 ./gradlew buildah ; ./gradlew buildahPushDockerHub
 ```
@@ -48,7 +74,8 @@ buildah login --username <user> --password <password> docker.io
 # Restart deployment
 
 ```
-kubectl rollout restart deployment spring-boot-web-sidecar -n vault && kubectl rollout status deployment spring-boot-web-sidecar -n vault --timeout=90s
+kubectl rollout restart deployment spring-boot-web-vault -n vault
+kubectl rollout status deployment  spring-boot-web-vault -n vault --timeout=90s
 ```
 
 
@@ -58,7 +85,7 @@ kubectl rollout restart deployment spring-boot-web-sidecar -n vault && kubectl r
 
 ```
 # define variables
-id=spring-boot-with-vault-sidecar
+id=spring-boot-web-with-spring-cloud-vault
 artifact_id="${id//-}"
 SpringAppClassName=SpringMain
 version="0.0.1"
