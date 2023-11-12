@@ -4,8 +4,7 @@
 #export app=spring-boot-web-vault
 #export namespace_k8s=vault
 #export service_account_k8s=vault-auth
-#export auth_path_vault=auth/kubernetes
-#export vault_uri=http://localhost:8200
+#export vault_uri=http://vault.vault.svc.cluster.local:8200
 #export vault_role=myrole
 #export vault_backend=secret; export vault_context=webapp; export vault_profile=config
 #
@@ -35,7 +34,8 @@ spec:
 
       containers:
       - name: main
-        image: ghcr.io/fabianlee/spring-boot-web-with-spring-cloud-vault:latest
+        #image: ghcr.io/fabianlee/spring-boot-web-with-spring-cloud-vault:1.0.0
+        image: docker.io/fabianlee/spring-boot-web-with-spring-cloud-vault:latest
         imagePullPolicy: Always
         resources:
           requests:

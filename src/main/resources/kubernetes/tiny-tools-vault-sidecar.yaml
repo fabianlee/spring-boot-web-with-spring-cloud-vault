@@ -4,8 +4,8 @@
 #export app=spring-boot-web-vault
 #export namespace_k8s=vault
 #export service_account_k8s=vault-auth
-#export auth_path_vault=auth/kubernetes
 #export vault_uri=http://localhost:8200
+#export vault_auth_path=auth/kubernetes
 #export vault_role=myrole
 #export vault_backend=secret; export vault_context=webapp; export vault_profile=config
 #
@@ -37,7 +37,7 @@ spec:
         vault.hashicorp.com/auth-type: 'kubernetes'
         vault.hashicorp.com/auth-config-path: '/var/run/secrets/kubernetes.io/serviceaccount/token'
         vault.hashicorp.com/remove-jwt-after-reading : 'false'
-        vault.hashicorp.com/auth-path: $auth_path_vault
+        vault.hashicorp.com/auth-path: $vault_auth_path
         vault.hashicorp.com/role: $vault_role
         #vault.hashicorp.com/namespace: $namespace_vault # only available to Vault Enterprise
 
@@ -66,7 +66,8 @@ spec:
 
       containers:
       - name: main
-        image: ghcr.io/fabianlee/spring-boot-web-with-spring-cloud-vault:latest
+        #image: ghcr.io/fabianlee/spring-boot-web-with-spring-cloud-vault:1.0.0
+        image: docker.io/fabianlee/spring-boot-web-with-spring-cloud-vault:latest
         imagePullPolicy: Always
         resources:
           requests:
