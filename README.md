@@ -14,20 +14,20 @@ blog: https://fabianlee.org/2023/11/12/vault-spring-boot-web-app-using-spring-cl
 
 blog: https://fabianlee.org/2023/11/10/vault-hashicorp-vault-deployed-into-kubernetes-cluster-for-secret-management/
 
-# Adding Vault sidecar
+# (Optional) Vault sidecar
 
 Even though the Spring Cloud Vault libraries allow a Spring application to fetch secrets directly from a Vault server, 
-there are a multiple reasons you may want still to run a Vault sidecar:
+there are multiple reasons you may want still to run a Vault sidecar:
 
   * Your particular app language does not have a fully-featured Vault client library
   * You want to shield your application from Vault server configuration details
   * You have a legacy application that must continue reading config/secrets from the filesystem/environment
 
-This project also supports pointing at the Vault sidecar as well (http://localhost:8082).
+This project supports pointing at the Vault sidecar as well, http://localhost:8082
 
 
 
-## Create bootJar and OCI image with Docker
+## Create bootJar and OCI image with Docker manually
 
 ```
 ./gradlew
@@ -36,7 +36,7 @@ This project also supports pointing at the Vault sidecar as well (http://localho
 
 ```
 
-# Creating tag
+# Creating tag, which runs GitHub Action to build image and upload
 
 ```
 newtag=v1.0.1
