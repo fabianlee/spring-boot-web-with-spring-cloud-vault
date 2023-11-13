@@ -45,6 +45,14 @@ git commit -a -m "changes for new tag $newtag" && git push -o ci.skip
 git tag $newtag && git push origin $newtag
 ```
 
+# Generate image locally then push to DockerHub during development lifecycle
+
+```
+# makes this image avaible on DockerHub
+buildah login --username <user> --password <password> docker.io
+./gradlew buildah ; ./gradlew buildahPushDockerHub
+```
+
 # Deleting tag
 
 ```
@@ -64,21 +72,12 @@ gh release delete $todel --cleanup-tag -y
 git tag -d $todel
 ```
 
-# Generate image locally then push latest to DockerHub during development lifecycle
-
-```
-# makes this image avaible on DockerHub: fabianlee/spring-boot-web-with-spring-cloud-vault:latest
-buildah login --username <user> --password <password> docker.io
-./gradlew buildah ; ./gradlew buildahPushDockerHub
-```
-
 # Restart deployment
 
 ```
 kubectl rollout restart deployment spring-boot-web-vault -n vault
 kubectl rollout status deployment  spring-boot-web-vault -n vault --timeout=90s
 ```
-
 
 ## Project initially created using Spring Starter
 
