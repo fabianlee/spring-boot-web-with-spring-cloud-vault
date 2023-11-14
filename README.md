@@ -1,6 +1,6 @@
 # Spring Boot web using Cloud Vault library to fetch secrets directly from HashiCorp Vault server
 
-blog: https://fabianlee.org/2023/11/12/vault-spring-boot-web-app-using-spring-cloud-vault-to-fetch-vault-secrets/
+blog: https://fabianlee.org/2023/11/12/vault-spring-boot-web-app-using-spring-cloud-vault-to-fetch-secrets/
 
 blog: https://fabianlee.org/2023/11/10/vault-hashicorp-vault-deployed-into-kubernetes-cluster-for-secret-management/
 
