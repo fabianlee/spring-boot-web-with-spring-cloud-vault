@@ -34,7 +34,6 @@ This project supports pointing at the Vault sidecar as well, http://localhost:80
 ./gradlew
 ./gradlew bootJar
 ./gradlew docker [-Pversion=1.0.1 ]
-
 ```
 
 # Creating tag, which runs GitHub Action to build image and upload
