@@ -26,8 +26,6 @@ RUN DEBIAN_FRONTEND=noninteractive && \
   /usr/sbin/useradd -l -u $THE_USER_ID -G spring -g $THE_GROUP_ID spring && \
   mkdir logs && chgrp spring logs && chmod ug+rwx logs
 
-##### EVERYTHING BELOW IS APP SPECIFIC AND WILL BE DONE BY JIB IN NEXT LAYER ######
-
 # run as non-root
 USER spring:spring
 

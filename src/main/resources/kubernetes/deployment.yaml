@@ -9,7 +9,7 @@
 #export vault_backend=secret; export vault_context=webapp; export vault_profile=config
 #
 # generate:
-# cat tiny-tools.yaml | DOLLAR_SIGN='$' envsubst | kubectl apply -f -
+# cat deployment.yaml | DOLLAR_SIGN='$' envsubst | kubectl apply -f -
 ---
 apiVersion: apps/v1
 kind: Deployment

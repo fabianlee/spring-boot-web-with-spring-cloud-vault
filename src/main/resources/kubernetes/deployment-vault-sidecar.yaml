@@ -10,7 +10,7 @@
 #export vault_backend=secret; export vault_context=webapp; export vault_profile=config
 #
 # generate:
-# cat tiny-tools.yaml | DOLLAR_SIGN='$' envsubst | kubectl apply -f -
+# cat deployment-vault-sidecar.yaml | DOLLAR_SIGN='$' envsubst | kubectl apply -f -
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -50,14 +50,6 @@ spec:
           {{- with secret "$vault_backend/$vault_context/$vault_profile" -}}
           {{- range ${DOLLAR_SIGN}k, ${DOLLAR_SIGN}v := .Data.data -}}
           {{ ${DOLLAR_SIGN}k }} = {{ ${DOLLAR_SIGN}v }}
-          {{ end }}
-          {{- end -}}
-          
-        # embed as system environment variable of container
-        vault.hashicorp.com/agent-inject-template-config: |
-          {{- with secret "$vault_backend/$vault_context/$vault_profile" -}}
-          {{- range ${DOLLAR_SIGN}k, ${DOLLAR_SIGN}v := .Data.data -}}
-          {{ export MYENV_${DOLLAR_SIGN}k }}="{{ ${DOLLAR_SIGN}v" }}
           {{ end }}
           {{- end -}}
 
